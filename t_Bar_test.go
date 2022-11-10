@@ -1,6 +1,7 @@
 package percbar
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -52,7 +53,9 @@ func TestBar(t *testing.T) {
 	}
 
 	for _, tc := range testcases {
-		bar := New(tc.data)
+		bar := New(tc.data).SetOptions(OptionsColorBlind)
+
+		fmt.Println(bar)
 		if tc.header != "" {
 			bar.options.Header = tc.header
 		}

@@ -57,6 +57,10 @@ func (bar *Bar) String() string {
 		return bar.cache
 	}
 
+	if bar.options.Chars == "" {
+		bar.options.Chars = string([]rune(OptionsDefault.Chars)[0])
+	}
+
 	// chars to runes
 	for _, c := range []rune(bar.options.Chars) {
 		bar.chars = append(bar.chars, c)
@@ -69,11 +73,21 @@ func (bar *Bar) String() string {
 
 	// loop and make this bar
 	for i, sector := range bar.sectors {
+
 		sector.char = bar.chars[i%len(bar.chars)]
 		sector.color = bar.colors[i%len(bar.colors)]
 		sector.percents = int(math.Floor((sector.count / bar.sum) * 100.0))
 
 		sectOut := strings.Repeat(string(sector.char), sector.percents)
+
+		// if there is no colors mode (or same color) and same block used
+		// use separator to know where sectors begin/end.
+		useSeparator := i > 0 && sector.percents > 0
+		useSeparator = useSeparator && sector.color == bar.sectors[i-1].color
+		useSeparator = useSeparator && sector.char == bar.sectors[i-1].char
+		if useSeparator {
+			sectOut = " " + strings.Repeat(string(sector.char), sector.percents-1)
+		}
 
 		// [MyLabel 34% (234)]
 		labelParts := []string{
@@ -91,7 +105,6 @@ func (bar *Bar) String() string {
 			}
 		}
 
-		// plain - no color
 		if sector.color != nil {
 			sectOut = sector.color.Sprintf("%s", sectOut)
 		}

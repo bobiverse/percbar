@@ -15,10 +15,6 @@ type sector struct {
 	color    *color.Color
 }
 
-func (sect *sector) isProcessed() bool {
-	return sect.char != 0 // && sect.percents > 0
-}
-
 func newSector(label string, count float64) *sector {
 	return &sector{
 		label: label,
