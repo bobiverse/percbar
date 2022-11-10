@@ -1,4 +1,4 @@
-module github.com/bobiverse/percbar~
+module github.com/bobiverse/percbar
 
 go 1.18
 
