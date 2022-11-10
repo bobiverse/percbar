@@ -1,6 +1,7 @@
 # percbar
 
-Display data in horizontal percentage bar.
+Display data in horizontal percentage bar.  
+This is static bar. If you looking for dynamic progress bar, check this great package  https://github.com/cheggaaa/pb .  
 
 ## Preview
 
