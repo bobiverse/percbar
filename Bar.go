@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"golang.org/x/exp/constraints"
 )
 
 // Bar is filled with sectors
@@ -23,15 +24,20 @@ type Bar struct {
 	cache string
 }
 
+// Number -- (c) https://stackoverflow.com/questions/67678331/how-to-write-a-generic-function-that-accepts-any-numerical-type
+type Number interface {
+	constraints.Integer | constraints.Float
+}
+
 // New bar as exported func
-func New(values map[string]float64) *Bar {
+func New[T Number](values map[string]T) *Bar {
 	bar := &Bar{
 		options: *OptionsDefault,
 	}
 
 	for label, count := range values {
-		bar.sectors = append(bar.sectors, newSector(label, count))
-		bar.sum += count
+		bar.sectors = append(bar.sectors, newSector(label, float64(count)))
+		bar.sum += float64(count)
 	}
 
 	sort.Sort(bar.sectors)
@@ -62,7 +68,7 @@ func (bar *Bar) String() string {
 	}
 
 	// chars to runes
-	for _, c := range []rune(bar.options.Chars) {
+	for _, c := range bar.options.Chars {
 		bar.chars = append(bar.chars, c)
 	}
 

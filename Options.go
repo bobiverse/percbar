@@ -1,5 +1,6 @@
 package percbar
 
+// Options presets
 var (
 	OptionsDefault = &Options{
 		Chars:             "▐",
