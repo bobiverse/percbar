@@ -35,9 +35,8 @@ func TestNegativeValueSectorPercents(t *testing.T) {
 	}
 }
 
-// An all-zero input makes bar.sum == 0, so count/sum is NaN, and int(NaN)
-// becomes negative, panicking strings.Repeat unless guarded.
-func TestZeroSumPanics(t *testing.T) {
+// An all-zero input makes bar.sum == 0, so percent calculations must avoid NaN/Inf and String() must not panic.
+func TestZeroSumDoesNotPanic(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("String() panicked on zero-sum input: %v", r)
