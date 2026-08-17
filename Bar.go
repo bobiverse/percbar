@@ -37,7 +37,7 @@ func New[T Number](values map[string]T) *Bar {
 
 	for label, count := range values {
 		bar.sectors = append(bar.sectors, newSector(label, float64(count)))
-		bar.sum += float64(count)
+		bar.sum += math.Abs(float64(count))
 	}
 
 	sort.Sort(bar.sectors)
@@ -68,6 +68,7 @@ func (bar *Bar) String() string {
 	}
 
 	// chars to runes
+	bar.chars = nil
 	for _, c := range bar.options.Chars {
 		bar.chars = append(bar.chars, c)
 	}
@@ -82,7 +83,17 @@ func (bar *Bar) String() string {
 
 		sector.char = bar.chars[i%len(bar.chars)]
 		sector.color = bar.colors[i%len(bar.colors)]
-		sector.percents = int(math.Floor((sector.count / bar.sum) * 100.0))
+		sector.percents = 0
+		percentLabel := "0%"
+		if bar.sum > 0 {
+			raw := (sector.count / bar.sum) * 100.0
+			sector.percents = max(0, int(math.Floor(raw)))
+			percentLabel = fmt.Sprintf("%d%%", sector.percents)
+			// show one decimal when the fraction is more than half a percent
+			if frac := raw - math.Floor(raw); raw > 0 && frac > 0.5 {
+				percentLabel = fmt.Sprintf("%.1f%%", raw)
+			}
+		}
 
 		sectOut := strings.Repeat(string(sector.char), sector.percents)
 
@@ -97,9 +108,9 @@ func (bar *Bar) String() string {
 
 		// [MyLabel 34% (234)]
 		labelParts := []string{
-			" " + sector.label,                   // MyLabel
-			fmt.Sprintf("%d%%", sector.percents), //  34%
-			fmt.Sprintf("(%.0f)", sector.count),  // (234)
+			" " + sector.label,                  // MyLabel
+			percentLabel,                        //  34%
+			fmt.Sprintf("(%.0f)", sector.count), // (234)
 		}
 
 		// choose longest possible for display
