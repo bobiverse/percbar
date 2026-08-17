@@ -86,8 +86,9 @@ func (bar *Bar) String() string {
 		sector.percents = 0
 		percentLabel := "0%"
 		if bar.sum > 0 {
-			raw := (sector.count / bar.sum) * 100.0
-			sector.percents = max(0, int(math.Floor(raw)))
+			absCount := math.Abs(sector.count)
+			raw := (absCount / bar.sum) * 100.0
+			sector.percents = min(100, int(math.Floor(raw)))
 			percentLabel = fmt.Sprintf("%d%%", sector.percents)
 			// show one decimal when the fraction is more than half a percent
 			if frac := raw - math.Floor(raw); raw > 0 && frac > 0.5 {
